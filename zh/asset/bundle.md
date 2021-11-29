@@ -60,7 +60,7 @@ function loadBundle (name) {
 | 压缩类型      | 决定 Asset Bundle 最后的输出形式，包括 **合并依赖**、**无压缩**、**合并所有 JSON**、**小游戏分包**、**Zip** 5 种压缩类型。具体内容请参考 [Asset Bundle - 压缩类型](bundle.md#%E5%8E%8B%E7%BC%A9%E7%B1%BB%E5%9E%8B) |
 | 配置为远程包  | 是否将 Asset Bundle 配置为远程包，不支持 Web 平台。<br>若勾选了该项，则 Asset Bundle 在构建后会被放到 **remote** 文件夹，你需要将整个 **remote** 文件夹放到远程服务器上。<br>构建 OPPO、vivo、华为等小游戏平台时，若勾选了该项，则不会将 Asset Bundle 打包到 rpk 中。 |
 
-配置完成后点击右上方的 **应用** 按钮，这个文件夹就被配置为 Asset Bundle 了，然后在 **构建发布** 面板选择对应的平台进行构建。
+配置完成后点击面板右上方的 **绿色打钩按钮**，这个文件夹就被配置为 Asset Bundle 了，然后在 **构建发布** 面板选择对应的平台进行构建。
 
 **注意**：
 1. Creator 有 3 个 [内置 Asset Bundle](bundle.md#%E5%86%85%E7%BD%AE-asset-bundle)，包括 **resources**、**main**、**start-scene**，在设置 **Bundle 名称** 时请不要使用这三个名称。
@@ -184,7 +184,7 @@ Asset Bundle 在更新上延续了 Creator 的 MD5 方案。当你需要更新�
 
 ![md5 cache](subpackage/bundle_md5.png)
 
-在加载 Asset Bundle 时 **不需要** 额外提供对应的 Hash 值，Creator 会在 `settings.js` 中查询对应的 Hash 值，并自动做出调整。<br>
+在加载 Asset Bundle 时 **不需要** 额外提供对应的 Hash 值，Creator 会在 `settings.json` 中查询对应的 Hash 值，并自动做出调整。<br>
 但如果你想要将相关版本配置信息存储在服务器上，启动时动态获取版本信息以实现热更新，你也可以手动指定一个版本 Hash 值并传入 `loadBundle` 中，此时将会以传入的 Hash 值为准：
 
 ```typescript
@@ -210,7 +210,7 @@ bundle.load(`prefab`, Prefab, function (err, prefab) {
 });
 
 // 加载 Texture
-bundle.load(`image`, Texture2D, function (err, texture) {
+bundle.load(`image/texture`, Texture2D, function (err, texture) {
     console.log(texture)
 });
 ```
@@ -219,7 +219,7 @@ bundle.load(`image`, Texture2D, function (err, texture) {
 
 ```typescript
 // 加载 SpriteFrame
-bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
     console.log(spriteFrame);
 });
 ```
@@ -272,7 +272,7 @@ Asset Bundle 中提供了 `preload` 和 `preloadDir` 接口用于预加载 Asset
 1. 使用常规的 `assetManager.releaseAsset` 方法进行释放。
 
     ```typescript
-    bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+    bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
         assetManager.releaseAsset(spriteFrame);
     });
     ```
@@ -280,7 +280,7 @@ Asset Bundle 中提供了 `preload` 和 `preloadDir` 接口用于预加载 Asset
 2. 使用 Asset Bundle 提供的 `release` 方法，通过传入路径和类型进行释放，只能释放在 Asset Bundle 中的单个资源。参数可以与 Asset Bundle 的 `load` 方法中使用的参数一致。
 
     ```typescript
-    bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+    bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
         bundle.release(`image`, SpriteFrame);
     });
     ```
@@ -288,7 +288,7 @@ Asset Bundle 中提供了 `preload` 和 `preloadDir` 接口用于预加载 Asset
 3. 使用 Asset Bundle 提供的 `releaseAll` 方法，此方法与 `assetManager.releaseAll` 相似，`releaseAll` 方法会释放所有属于该 bundle 的资源（包括在 Asset Bundle 中的资源以及其外部的相关依赖资源），请慎重使用。
 
     ```typescript
-    bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+    bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
         bundle.releaseAll();
     });
     ```
@@ -325,7 +325,7 @@ assetManager.removeBundle(bundle);
 - **Q**：Asset Bundle 与 v2.4 之前的资源分包有什么区别？<br>
   **A**：
   1. 资源分包实际上是将一些图片和网格拆分出去单独放在一个包内，但这个包是不完整的、无逻辑的，无法复用。<br>
-  Asset Bundle 是通过逻辑划分对资源进行模块化。Asset Bundle 中包含资源、脚本、元数据和资源清单，所以 Asset Bundle 是完整的、有逻辑的、可复用的，我们可以从 Asset Bundle 中加载出整个场景或其他任何资源。Asset Bundle 通过拆分，可以极大减少首包中的 json 数量以及 `settings.js` 的大小。
+  Asset Bundle 是通过逻辑划分对资源进行模块化。Asset Bundle 中包含资源、脚本、元数据和资源清单，所以 Asset Bundle 是完整的、有逻辑的、可复用的，我们可以从 Asset Bundle 中加载出整个场景或其他任何资源。Asset Bundle 通过拆分，可以极大减少首包中的 json 数量以及 `settings.json` 的大小。
 
   2. 资源分包本质上是由小游戏平台控制的一项基础功能。例如微信小游戏支持分包功能，Creator 就在此基础上做了一层封装，帮助开发者设置资源分包，如果微信小游戏不支持分包功能了，则 Creator 也不支持。<br>
   Asset Bundle 则完全由 Creator 设计实现，是一个帮助开发者对资源进行划分的模块化工具，与游戏平台无关，理论上可支持所有平台。
@@ -336,8 +336,8 @@ assetManager.removeBundle(bundle);
 - **Q**：Asset Bundle 是否支持大厅加子游戏的模式？<br>
   **A**：支持，子游戏的场景可以放在 Asset Bundle 中，在需要时加载，子游戏甚至可以在其它项目中预先以 Asset Bundle 的形式构建出来，然后在主项目中加载使用。
 
-- **Q**：Asset Bundle 可以减少 `settings.js` 的大小吗？<br>
-  **A**：当然可以。实际上从 v2.4 开始，打包后的项目完全是基于 Asset Bundle 的，`setting.js` 不再存储跟资源相关的任何配置信息，所有的配置信息都会存储在每个 Asset Bundle 的 `config.json` 中。每一个 `config.json` 只存储各自 Asset Bundle 中的资源信息，也就减小了首包的包体。可以简单地理解为所有的 `config.json` 加起来等于之前的 `settings.js`。
+- **Q**：Asset Bundle 可以减少 `settings.json` 的大小吗？<br>
+  **A**：当然可以。实际上从 v2.4 开始，打包后的项目完全是基于 Asset Bundle 的，`settings.json` 不再存储跟资源相关的任何配置信息，所有的配置信息都会存储在每个 Asset Bundle 的 `config.json` 中。每一个 `config.json` 只存储各自 Asset Bundle 中的资源信息，也就减小了首包的包体。可以简单地理解为所有的 `config.json` 加起来等于之前的 `settings.json`。
 
 - **Q**：Asset Bundle 支持跨项目复用吗？<br>
   **A**：当然支持，不过需要满足以下条件：

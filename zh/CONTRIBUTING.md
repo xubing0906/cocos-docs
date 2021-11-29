@@ -107,7 +107,7 @@
 
 跳转链接格式：**[跳转的文档名称]\(跳转的文档目录)**。使用半角（halfwidth）英文标点，且 [] 与 () 之间不要有空格
 
-> e.g：[Mask API]\(__APIDOC__/zh/classes/Mask.html)。跨文档的文件名后缀要使用 **.html**
+> e.g：[Mask API]\(\_\_APIDOC\_\_/zh/classes/Mask.html)。跨文档的文件名后缀要使用 **.html**
 
 ## 使用加粗且和相邻的正文之间加空格
 
@@ -249,7 +249,7 @@
 
 **英文句子中，并列词语之间使用半角逗号（,）分隔**
 
-> e.g：Microsoft Office includes Word, Excel, PowerPoint, Outlook and other components.
+> e.g.: Microsoft Office includes Word, Excel, PowerPoint, Outlook and other components.
 
 **中文句子内部的并列词，最后一个尽量使用（和）来连接，使句子读起来更加连贯**
 
@@ -341,6 +341,20 @@
 > | 属性 2  | 说明 2  |
 
 前后可保留适当的空格，方便编辑。
+
+## 脚注写法
+
+例如：
+
+这是有脚注的内容。\[^1]
+
+\[^1]: 这是脚注的注释内容。
+
+效果如下：
+
+这是有脚注的内容。[^1]
+
+[^1]: 这是脚注的注释内容。
 
 ## 参考链接
 

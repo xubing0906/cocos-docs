@@ -4,7 +4,7 @@
 
 Starting with v2.4, Creator officially supports **Asset Bundle**. The Asset Bundle is a modular resource tool that allows developers to divide the resources such as textures, scripts, scenes, etc. into different Asset Bundles according to the project requirements. Then, as the game runs, load different Asset Bundles as needed to minimize the number of resources to be loaded at startup. thus reducing the time required for the first download and loading of the game.
 
-The Asset Bundle can be placed in different places as needed, such as on a remote server, locally, or in a subpackage of a mini game platform. It also can be reused across projects to load Asset Bundle in subprojects.
+The Asset Bundle can be placed in different places as needed, such as on a remote server, locally, or in a subpackage of a mini game platform. It also can be reused across projects to load Asset Bundle in sub-projects.
 
 ## The built-in Asset Bundle
 
@@ -59,9 +59,10 @@ The custom Asset Bundle is configured in **folders**. When we select a folder in
 | **Compression Type** | Determines the final output form of the Asset Bundle, including the five compression types **Merge Depend**, **None**, **Merge All JSON**, **Mini Game Subpackage**、**Zip**. For more detail, see [Asset Bundle -- Compression Type](bundle.md#compression-type) documentation. |
 | **Is Remote Bundle** | Whether to configure the Asset Bundle as a remote package and not support the Web platform.<br>If checked, the Asset Bundle will be placed in the **remote** folder after the build, and you will need to place the entire **remote** folder on the remote server.<br>When building mini game platforms such as OPPO, vivo, Huawei, etc., the Asset Bundle will not be packaged into rpk if this option is checked. |
 
-After the configuration, click on the **Apply** button at the top right and the folder will be configured as an Asset Bundle, then select the corresponding platform in the **Build** panel to build.
+After the configuration, click the **green tick button** at the top right of the panel, and the folder will be configured as an Asset Bundle, then select the corresponding platform in the **Build** panel to build.
 
 > **Notes**:
+>
 > 1. There are three [built-in Asset Bundles](bundle.md#the-built-in-asset-bundle) in the Creator, including **resources**, **main** and **start-scene**. When setting the **Bundle Name**, **do not** use these three names.
 > 2. The [mini game subpackage](../editor/publish/subpackage.md) can only be placed locally and cannot be configured as remote packages. So the **Is Remote Bundle** option cannot be checked when the compression type is set to **Mini Game Subpackage**.
 > 3. The Zip compression type is primarily used to reduce the number of network requests and is used by default with the **Is Remote Bundle** option. Since the package doesn't need network requests if it's local, there's no need to use Zip compression.
@@ -83,7 +84,7 @@ Creator opens up 10 configurable priorities, and the editor will build the Asset
 
 If you want to load this shared resource in a lower-priority Asset Bundle, you must load the higher-priority Asset Bundle before loading the lower-priority Asset Bundle.
 
-- When the same resource is referenced by multiple Asset Bundles of the **same priority**, the resource will be copied in each Asset Bundle, with no dependencies between the different Asset Bundles, and they can be loaded in any order. So try to make sure that the Asset Bundle that the shared resource (e.g. `Texture`, `SpriteFrame`, `Audio`, etc.) is in has a higher priority, so that more lower-priority Asset Bundles can share resources, thus minimizing the package size.
+- When the same resource is referenced by multiple Asset Bundles of the **same priority**, the resource will be copied in each Asset Bundle, with no dependencies between the different Asset Bundles, and they can be loaded in any order. So try to make sure that the Asset Bundle that the shared resource (e.g.: `Texture`, `SpriteFrame`, `Audio`, etc.) is in has a higher priority, so that more lower-priority Asset Bundles can share resources, thus minimizing the package size.
 
 The four built-in Asset Bundle folders are prioritized as follows:
 
@@ -187,7 +188,7 @@ The Asset Bundle continues the MD5 scheme of the Creator for updates. When you n
 
 ![md5 cache](subpackage/bundle_md5.png)
 
-It is not necessary to provide an additional Hash value when loading the Asset Bundle, Creator will search for the corresponding Hash value in the `settings.js` and make adjustments automatically.<br>
+It is not necessary to provide an additional Hash value when loading the Asset Bundle, Creator will search for the corresponding Hash value in the `settings.json` and make adjustments automatically.<br>
 However, if you want to store the relevant version configuration information on the server and dynamically fetch the version information at startup for hot updates, you can manually specify a version Hash value and pass in the `loadBundle`, and the Asset Bundle will be built based on the incoming Hash value:
 
 ```typescript
@@ -213,7 +214,7 @@ bundle.load(`prefab`, Prefab, function (err, prefab) {
 });
 
 // Load Texture
-bundle.load(`image`, Texture2D, function (err, texture) {
+bundle.load(`image/texture`, Texture2D, function (err, texture) {
     console.log(texture)
 });
 ```
@@ -222,7 +223,7 @@ Like the `resources.load`, the `load` method also provides a type parameter, whi
 
 ```typescript
 // Load SpriteFrame
-bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
     console.log(spriteFrame);
 });
 ```
@@ -275,7 +276,7 @@ After loading the resources, all the resources are temporarily cached in `assetM
 1. Use the regular `assetManager.releaseAsset` method for release.
 
     ```typescript
-    bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+    bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
         assetManager.releaseAsset(spriteFrame);
     });
     ```
@@ -283,7 +284,7 @@ After loading the resources, all the resources are temporarily cached in `assetM
 2. Use `release` method provided by the Asset Bundle, then pass in the path and type to release resources, but can only release the single resource in the Asset Bundle. The arguments can be the same as those used in the `load` method of the Asset Bundle.
 
     ```typescript
-    bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+    bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
         bundle.release(`image`, SpriteFrame);
     });
     ```
@@ -291,7 +292,7 @@ After loading the resources, all the resources are temporarily cached in `assetM
 3. Use `releaseAll` method provided by the Asset Bundle, which is similar to the `assetManager.releaseAll`, but the `releaseAll` will release all resources that belong to the Asset Bundle (including resources in the Asset Bundle and the related dependent resources outside the Asset Bundle), so please use caution.
 
     ```typescript
-    bundle.load(`image`, SpriteFrame, function (err, spriteFrame) {
+    bundle.load(`image/spriteFrame`, SpriteFrame, function (err, spriteFrame) {
         bundle.releaseAll();
     });
     ```
@@ -327,8 +328,8 @@ assetManager.removeBundle(bundle);
 
 - **Q**: What is the difference between Asset Bundle and resource subpackage?<br>
   **A**:
-  1. Resource subpackage is actually splitting out some textures, meshs into a separate packages, but the package is incomplete and illogical and cannot be reused.<br>
-  while Asset Bundle is modularizing resources through logical division. The Asset Bundle includes resources, scripts, metadata and resource lists, so it is complete, logical and reusable, and we can load an entire scene or any other resources from Asset Bundle. By splitting the Asset Bundle, you can greatly reduce the number of `json` and the size of `settings.js` in the first package.
+  1. Resource subpackage is actually splitting out some textures, meshes into a separate packages, but the package is incomplete and illogical and cannot be reused.<br>
+  while Asset Bundle is modularizing resources through logical division. The Asset Bundle includes resources, scripts, metadata and resource lists, so it is complete, logical and reusable, and we can load an entire scene or any other resources from Asset Bundle. By splitting the Asset Bundle, you can greatly reduce the number of `json` and the size of `settings.json` in the first package.
 
   2. Resource subpackage is essentially a basic function controlled by the mini game platform. For example, the WeChat Mini Game supports subpackage, and then Creator made a layer of encapsulation on top of that to help the developers set up resource subpackage. If the WeChat Mini Game doesn't support subpackage anymore, neither does the Creator.<br>
   While the Asset Bundle is designed and implemented entirely by Creator, it is a modular tool to help developers divide their resources, independent of the platform, and can theoretically be supported on all platforms.
@@ -339,8 +340,8 @@ assetManager.removeBundle(bundle);
 - **Q**: Does the Asset Bundle support the lobby plus sub games mode?<br>
   **A**: Absolutely, subgame scenes can be placed in the Asset Bundle and loaded when needed, and subgames can even be pre-built as an Asset Bundle in other projects and then loaded for use in the main project.
 
-- **Q**: Can the Asset Bundle reduce the size of `settings.js`?<br>
-  **A**: Absolutely. In fact, as of v2.4, the packaged project is entirely based on the Asset Bundle, and the `setting.js` no longer stores any configuration information related to the resource, all configuration informations are stored in the `config.json` of each Asset Bundle. Each `config.json` stores only the resource information in the respective Asset Bundle, which reduces the size of the first package. This can simply be understood as all the `config.json` combined equal to the previous `settings.js`.
+- **Q**: Can the Asset Bundle reduce the size of `settings.json`?<br>
+  **A**: Absolutely. In fact, as of v2.4, the packaged project is entirely based on the Asset Bundle, and the `settings.json` no longer stores any configuration information related to the resource, all configuration information are stored in the `config.json` of each Asset Bundle. Each `config.json` stores only the resource information in the respective Asset Bundle, which reduces the size of the first package. This can simply be understood as all the `config.json` combined equal to the previous `settings.json`.
 
 - **Q**: Does the Asset Bundle support cross project reuse?<br>
   **A**: Absolutely support, but the following conditions must be met:

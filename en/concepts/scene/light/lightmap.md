@@ -1,74 +1,79 @@
 # Lightmapping
 
-> **Note**: currently, the lightmapping does not support Apple M1 (Silicon) architecture devices, and is expected to be supported in v3.1.
+> **Note**: the Lightmapping feature is not currently supported on Apple M1 (Silicon) architecture devices and is expected to be supported in v3.2.1.
 
-The __baking system__ is the process of finally generating light maps and applying them in the scene by calculating the influence of all light sources on the object in the engine scene. The purpose of this system is to reduce the calculation of real-time light sources, thereby improving the efficiency of the scene.
+The **Baking System** pre-calculates the lighting, shadows, etc. that a static object with a stable light will receive. The result of this calculation is stored in a texture map, which is called a **lightmap**.
 
-## Lightmap panel
+Cocos Creator automatically processes and uses the generated lightmap at runtime. In scenes with fixed lights, using lightmaps instead of real-time lighting calculations can reduce resource consumption and thus increase the efficiency of the scene.
 
-The baking process is to calculate the generated results according to the parameters set on the panel, as shown below:
+## Lightmapping Panel
 
-![lightmap](./lightmap/lightmap-panel.png)
+Click **Project -> Lightmapping** in the editor menu bar to open the Lightmapping panel. The panel consists of two pages, **Scene** and **Baked**.
 
-The following table describes the specific meaning of each parameter:
+![bake result](./lightmap/lightmap-panel.png)
 
-| Parameter | Description |
+- **Scene**: mainly used to configure the parameters related to generating the lightmap.
+- **Baked**: mainly used to display the generated lightmap and its related information.
+
+For details, please see the **Generating Lightmaps** section below.
+
+### Property Description
+
+The description of each property on the **Scene** page is as follows:
+
+| Property | Description |
 | :--- | :--- |
-| MSAA | Multisampling. Has the following values: 1, 2, 4, 8 |
-| Resolution | Baking map size. Has the following values: 128, 256, 512, 1024, 2048 |
-| Gamma      | Gamma correction value |
-| GIScale    | Global illumination scaling factor |
-| GISamples  | Global illumination sampling coefficient |
-| AOLevel    | AO Level |
-| AOStrength | AO Strength |
-| AORadius   | AO Radius |
-| AOColor    | AO Color |
+| MSAA | Multiple Sampling, optional values include: 1, 2, 4, 8 |
+| Resolution | The resolution of the generated lightmap, optional values are 128, 256, 512, 1024, 2048 |
+| Gamma | Gamma correction value |
+| GIScale | Global lighting scaling factor |
+| GISamples | Global illumination sampling factor |
+| AOLevel | AO (Ambient Occlusion) level |
+| AOStrength | AO intensity |
+| AORadius | AO radius |
+| AOColor | AO color |
 
-## Baking the lightmaps
+## Generating lightmaps
 
-The following three steps are required to turn on the baking system:
-
-1. Click the menu button in the top menu bar `Project`, click the `Lightmap` button in the pop-up menu bar to pop up the Lightmap panel.
-
-    ![create lightmap](./lightmap/bake-menu.png)
-
-2. Before baking, you need to set `bakeable` to `true` in the static light attribute of the light source component in the editor.
-
-    > **Note**: currently only one main direction light source is supported.
+1. Select the node with the light component in the **Hierarchy** panel, then set the **StaticSettings** of the light component in the **Inspector** panel, and check the `Bakeable` property (currently multiple [Directional Lights](./lightType/dir-light.md) are not supported).
 
     ![enable lightbake](./lightmap/light-bakeable.png)
 
-    - **EditorOnly**: When checked, only takes effect in the editor
-    - **Bakeable**: When checked, enable bake static lighting
-    - **CastShadow**: When checked, enable cast static shadow
+    - **EditorOnly**: whether to take effect only in the editor
 
-3. Set the lightmap properties of the `MeshRenderer` component.
+    - **Bakeable**: whether to bake static lighting
 
-    ![model lighting map settings](./lightmap/meshrenderer-bakeable.png)
+    - **CastShadow**: whether to cast static shadows
 
-    - **Bakeable**: When checked, enable bake lighting
-    - **CastShadow**: When checked, enable cast static shadow
-    - **ReceiveShadow**: When checked, enable receive static shadow
-    - **LightmapSize**: Lightmap size of the model
+2. Select the node with the [MeshRenderer component](./../../../engine/renderable/model-component.md) in the **Hierarchy** panel to generate the lightmap, then set **LightmapSettings** in the **Inspector** panel and check the `Bakeable` property.
 
-4. In the lightmap panel that pops up, after setting the corresponding parameters, click the `Lightmap Generate` button and select the corresponding storage folder to generate the lightmap.
+    ![model lightmap settings](./lightmap/meshrenderer-bakeable.png)
 
-    > **Note**: the storage folder must be under `assets`.
+    - **Bakeable**: whether to bake static lighting
 
-    ![create lightmap asset](./lightmap/lightmap-generate.png)
+    - **CastShadow**: whether to cast static shadows
 
-## Using
+    - **ReceiveShadow**: whether to receive static shadows
 
-During the process of generating baked maps, there will be a generated progress prompt. After the generation, you can view it in the `Baked` tab in the `lightmap` panel.
+    - **LightmapSize**: the size of the model lightmap
 
-![bake result](./lightmap/lightmap-result.png)
+    > **Note**: to generate lightmaps for a model, there are two requirements:
+    >
+    > 1. When the artist creates a model resource, in addition to the UVs of the model itself, another set of UVs for lightmapping needs to be included.
+    >
+    > 2. The model's Materials need to have the **USE LIGHTMAP** rendering option turned on, for example:
+    >
+    > ![materials use lightmap](./lightmap/materials.png)
 
-- `Baked result (baked result display panel)` shows the lightmap texture after baking
-- `Lightmap clear (clear button)` can delete the generated result of baking
-- `information output panel` shows the information of each baked image (file name, size, etc.).
+3. Open the **Lightmapping** panel and set the corresponding properties. Then click the **Lightmap Generate** button, a file storage dialog will pop up, you need to specify a folder (must be in the `assets` directory) to store the generated lightmap data information. Notice the baking progress log at the bottom of the **Lightmapping** panel.
 
-> **Notes**:
-> 1. when artists create model resources, they need to include an additional set of UV for the lightmapping, in addition to the UV for the model itself.
-> 2. The model’s material needs to enable the **USE LIGHTMAP** rendering option:
->
->     ![materials use lightmap](./lightmap/materials.png)
+    ![bake param](./lightmap/lightmap-generate.png)
+
+4. After baking, the generated lightmap, as well as the file name, size and other related information can be viewed on the **Baked** page of the **Lightmapping** panel. The generated lightmaps are automatically processed by the engine and do not need to be manipulated by the developer.
+
+    ![bake result](./lightmap/lightmap-result.png)
+
+    1. **Bake result**: shows the generated lightmap after baking.
+    2. **Lightmap clear**: used to delete the generated lightmap and related information.
+    3. **Information output panel**: displays the generated lightmap file name, size and other related information.
+ 

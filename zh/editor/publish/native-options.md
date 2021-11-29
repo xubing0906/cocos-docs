@@ -35,6 +35,10 @@ Link 模板不会拷贝 Cocos2d-x 源码到构建目录下，而是使用共享�
 
 目前 Cocos Creator 安装目录下的 `resources\3d\cocos2d-x-lite` 文件夹中已经包含了自带的 Cocos2d-x 源码引擎。若需要自定义引擎，详情请参考 [引擎定制工作流程](../../advanced-topics/engine-customization.md)。
 
+#### 资源服务器地址
+
+当包体过大时，可将资源上传到资源服务器，通过网络请求下载。该项用于填写资源存放在远程服务器上的地址，开发者需要在构建后手动将发布包目录下的 `remote` 文件夹上传到所填写的资源服务器地址上。详情可参考 [上传资源到远程服务器](../../asset/cache-manager.md)
+
 #### Polyfills
 
 该项是脚本系统支持的一些新特性的 polyfills 选项，目前仅支持 **异步函数**。勾选后生成的项目会带上对应的 polyfills，也就是会增大包体，开发者可以根据实际需求选择是否使用。
@@ -61,7 +65,7 @@ Android 平台的构建选项如下：
 
 #### 渲染后端
 
-目前支持 **VULKAN**、**GLES3** 和 **GLES2** 三种，默认勾选 **GLES3**。在同时勾选多个的情况下，运行时将会根据设备实际支持情况选择使用的渲染后端。
+目前支持 [VULKAN](https://www.vulkan.org/)、[GLES3](https://www.khronos.org/registry/OpenGL-Refpages/es3/) 和 [GLES2](https://www.khronos.org/registry/OpenGL-Refpages/es2.0/) 三种，默认勾选 **GLES3**。在同时勾选多个的情况下，运行时将会根据设备实际支持情况选择使用的渲染后端。
 
 #### 应用 ID 名称
 
@@ -113,7 +117,7 @@ Android 要求所有 APK 必须先使用证书进行数字签署，然后才能�
 
 #### 生成 App Bundle（Google Play）
 
-勾选该项即可将游戏打包成 App Bundle 格式用于上传到 Google Play 商店。具体请参考 [官方文档](https://developer.android.google.cn/guide/app-bundle/) 。
+勾选该项即可将游戏打包成 App Bundle 格式用于上传到 Google Play 商店。具体请参考 [官方文档](https://developer.android.google.cn/guide/app-bundle/)。
 
 ### Windows 平台构建选项
 
@@ -131,11 +135,11 @@ iOS 平台的构建选项包括 **Bundle Identifier**、**屏幕方向** 和 **�
 
 包名，通常以产品网站 URL 倒序排列，如 `com.mycompany.myproduct`。
 
-> **注意**：包名中只能包含数字、字母和下划线，此外包名最后一部分必须以字母开头，不能以下划线或数字开头。
+> **注意**：包名中只能包含数字 (0~9)、字母 (A~Z、a~z)、中划线（-）和点（.），此外包名最后一部分必须以字母开头，不能以下划线或数字开头。详情请参考 [包的唯一标识符](https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleidentifier)。
 
 #### 渲染后端
 
-目前支持 **METAL** 和 **GLES3** 两种，默认勾选 **METAL**。在同时勾选多个的情况下，运行时将会根据设备实际支持情况来选择使用的渲染后端。
+**渲染后端** 目前支持 **METAL**。
 
 ### Mac 平台构建选项
 
@@ -180,6 +184,8 @@ v3.0 做了代码和配置的分离，将一部分代码和配置放入源码管
 - 若是基于 Android 平台做二次开发：
     - C++：需要在项目目录下的 `native\engine\android\CMakeLists.txt` 中添加引用。
     - Java：需要在项目发布包 `build\android\proj\build.gradle` 中添加引用。
+
+更多关于 CMake 的使用，详情可参考 [CMake 使用简介](../../advanced-topics/cmake-learning.md)。
 
 ## 生成和运行
 

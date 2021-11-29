@@ -8,7 +8,7 @@ During the development of the game, it is generally necessary to use a large num
 
 > **Note**: we will maintain compatibility with `loader` for a period of time, but we strongly recommend using **Asset Manager** consistently for new projects.
 
-you can refer to the following articles for upgrading:
+Refer to the following articles for upgrading:
 - [AssetManager Upgrade Guide](asset-manager-upgrade-guide.md)
 - [Asset Bundle Upgrade Guide](subpackage-upgrade-guide.md)
 
@@ -22,7 +22,7 @@ In addition to applying resources to the corresponding components while editing 
 2. developers can plan their own resource creation as Asset Bundle and load resources through the Asset Bundle's `load` family of APIs. For example:
 
     ```typescript
-    resources.load('images/background', SpriteFrame, (err, asset) => {
+    resources.load('images/background/spriteFrame', SpriteFrame, (err, asset) => {
       this.getComponent(Sprite).spriteFrame = asset;
     });
     ```
@@ -47,16 +47,16 @@ All loaded resources are cached in `assetManager`.
 
 ### Preloading
 
-To reduce download latency, `assetManager` and Asset Bundle not only provides interfaces for loading resources, each interface also provides a corresponding preloaded version. You can preload in game and then finish loading when you really need it. Preloading will only download the necessary resources and will not perform deserialization or initialization. Therefore, it consumes less performance and is suitable for use during the game.
+To reduce download latency, `assetManager` and Asset Bundle not only provides interfaces for loading resources, each interface also provides a corresponding preloaded version. Preloading in a game is an option that then allows finishing loading when it is really need it. Preloading will only download the necessary resources and will not perform deserialization or initialization. Therefore, it consumes less performance and is suitable for use during the game.
 
 ```typescript
 start () {
-    resources.preload('images/background', SpriteFrame);
+    resources.preload('images/background/spriteFrame', SpriteFrame);
     setTimeOut(this.loadAsset.bind(this), 10000);
 }
 
 loadAsset () {
-    resources.load('images/background', SpriteFrame, (err, asset) => {
+    resources.load('images/background/spriteFrame', SpriteFrame, (err, asset) => {
         this.getComponent(Sprite).spriteFrame = asset;
     });
 }
@@ -66,11 +66,11 @@ For more information on preloading, please refer to the [Preloading and Loading]
 
 ## Asset Bundle
 
-You can partition your scenes, resources, and code into multiple Asset Bundles and load resources dynamically at runtime, resulting in modularity of resources, so that you can load corresponding resources when needed. For example:
+Partitioning scenes, resources, and code into multiple Asset Bundles and the loading of resources dynamically at runtime results in modularity of resources and allows loading corresponding resources when needed. For example:
 
 ```typescript
 assetManager.loadBundle('testBundle', function (err, bundle) {
-    bundle.load('textures/background', (err, asset) => {
+    bundle.load('textures/background/texture', (err, asset) => {
         // ...
     });
 });
@@ -93,7 +93,7 @@ Creator also provides a reference counting mechanism to help you control the ref
 - When you need to hold a resource, call `addRef` to add a reference to ensure that the resource is not automatically released by other references to it.
 
   ```typescript
-  resources.load('textures/armor', Texture2D, function (err, texture) {
+  resources.load('textures/armor/texture', Texture2D, function (err, texture) {
       texture.addRef();
       this.texture = texture;
   });
@@ -110,7 +110,7 @@ Please refer to the [Release of Resources](release-manager.md) documentation for
 
 ## Cache Manager
 
-On some platforms, such as WeChat, it is possible to use the file system to cache some remote resources because a file system exists. In this case, a cache manager is required to manage all cache resources, such as caching resources, clearing cache resources, modifying cache cycles, etc. . Creator provides a cache manager on all platforms where file systems exist, so that you can add, delete, change, and check the cache. For example:
+On some platforms, such as WeChat, it is possible to use the file system to cache some remote resources because a file system exists. In this case, a cache manager is required to manage all cache resources, such as caching resources, clearing cache resources, modifying cache cycles, etc. . Creator provides a cache manager on all platforms where file systems exist that allows adding, deleting, changing, and checking the cache. For example:
 
 ```typescript
 // Get the cache of a resource.
@@ -124,7 +124,7 @@ Please refer to the [Cache Manager](cache-manager.md) documentation for more inf
 
 ## Optional Parameters
 
-Some of the interfaces for `assetManager` and Asset Bundle have an additional `options` parameter, which greatly increase the flexibility and extend the space. In addition to configuring the builtin parameters of Creator, you can also customize any of the parameters in `options`, and these parameters will be provided to the downloader, parser, and loading pipeline.
+Some of the interfaces for `assetManager` and Asset Bundle have an additional `options` parameter, which greatly increase the flexibility and extend the space. In addition to configuring the builtin parameters of Creator, it is also possible to customize any of the parameters in `options`, and these parameters will be provided to the downloader, parser, and loading pipeline.
 
 ```typescript
 bundle.loadScene('test', {priority: 3}, callback);
@@ -132,11 +132,11 @@ bundle.loadScene('test', {priority: 3}, callback);
 
 For more information on `options` parameter, please refer to the [Optional Parameters](options.md) documentation.
 
-If you don't need to configure the engine's builtin parameters or custom parameters to extend the engine's functionality, you can ignore it and use the simpler API interfaces, such as `resources.load`.
+If it is not necessary to configure the engine's builtin parameters or custom parameters to extend the engine's functionality, ignore it and use the simpler API interfaces, such as `resources.load`.
 
 ## Loading Pipeline
 
-To make it easier to extend the resource loading process, the underlying layer of Asset Manager uses mechanisms called **Pipeline and Task** and **Download and Parse** to load resources, greatly increasing flexibility and scalability. If you want to expand the load pipeline or customize it, you can refer to the following documentation:
+To make it easier to extend the resource loading process, the underlying layer of Asset Manager uses mechanisms called **Pipeline and Task** and **Download and Parse** to load resources, greatly increasing flexibility and scalability. To expand the load pipeline or customize it, refer to the following documentation:
 
 - [Pipeline and Task](pipeline-task.md)
 - [Download and Parse](downloader-parser.md)

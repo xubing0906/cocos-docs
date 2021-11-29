@@ -17,7 +17,7 @@ resources.load("test assets/anim", AnimationClip, (err, clip) => {
 });
 ```
 
-- All resources that need to be dynamically loaded by **script** must be placed in the `resources` folder or one of its subfolders. `resources` needs to be created manually in the `assets` folder and must be located in the `assets` root directory, like this:
+- All resources that need to be dynamically loaded by **script** must be placed in the `resources` folder or one of its sub-folders. `resources` needs to be created manually in the `assets` folder and must be located in the `assets` root directory, like this:
 
   ![asset-in-properties-null](load-assets/resources-file-tree.png)
 
@@ -53,7 +53,7 @@ resources.load("test assets/image/texture", Texture2D ,(err: any, texture: Textu
 
 ### Load SpriteFrames from Atlas
 
-For an atlas imported from a third-party tool such as Texturepacker, if you want to load the SpriteFrame, you can only load the atlas first, and then get the SpriteFrame. This is a special case.
+For an atlas imported from a third-party tool such as TexturePacker, if you want to load the SpriteFrame, you can only load the atlas first, and then get the SpriteFrame. This is a special case.
 
 ```typescript
 // load SpriteAtlas, and get one of them SpriteFrame
@@ -113,9 +113,9 @@ Starting with v2.4, in addition to scenes that can be preloaded, other resources
 `resources` provides `preload` and `preloadDir` for preloading resources.
 
 ```typescript
-resources.preload('test assets/image', SpriteFrame);
+resources.preload('test assets/image/spriteFrame', SpriteFrame);
  // wait for while
-resources.load('test assets/image', SpriteFrame, (err, spriteFrame) => {
+resources.load('test assets/image/spriteFrame', SpriteFrame, (err, spriteFrame) => {
     this.node.getComponent(Sprite).spriteFrame = spriteFrame;
 });
 ```
@@ -142,7 +142,7 @@ assetManager.loadRemote<ImageAsset>(remoteUrl, function (err, imageAsset) {
 
 // Remote texture url without file extensions, then you need to define the file type explicitly
 remoteUrl = "http://unknown.org/emoji?id=124982374";
-assetManager.loadRemote<ImageAsset>(remoteUrl, {ext: 'png'}, function (err, imageAsset) {
+assetManager.loadRemote<ImageAsset>(remoteUrl, {ext: '.png'}, function (err, imageAsset) {
     const spriteFrame = new SpriteFrame();
     const texture = new Texture2D();
     texture.image = imageAsset;
@@ -175,5 +175,5 @@ assetManager.loadRemote(remoteUrl, function (err, textAsset) {
 
 There still remains some restrictions currently, the most important are:
 
-1. This loading method supports only native resource types such as textures, audios, text, etc., and does not support direct loading and analysis of resources such as SpriteFrame, SpriteAtlas, Tilemap. (If you want to load all resources remotely, use the [Asset Bundle](bundle.md))
+1. This loading method supports only native resource types such as textures, audios, text, etc., and does not support direct loading and analysis of resources such as SpriteFrame, SpriteAtlas, TiledMap. (If you want to load all resources remotely, use the [Asset Bundle](bundle.md))
 2. Remote loading ability on Web is limited by the browser's [CORS cross-domain policy restriction](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS). If the server forbid cross-domain access, loading request will fail, and due to WebGL security policy restrictions, even if the server allows CORS http request, textures loaded can not be rendered.

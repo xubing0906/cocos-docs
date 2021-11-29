@@ -61,7 +61,7 @@ assetManager.releaseAsset(texture);
 
 因为资源管理模块在 v2.4 做了升级，所以释放接口与之前的版本有一点区别：
 
-1. `assetManager.releaseAsset` 接口仅能释放单个资源，且为了统一，接口只能通过资源本身来释放资源，不能通过资源 uuid、资源 url 等属性进行释放。
+1. `assetManager.releaseAsset` 接口仅能释放单个资源，且为了统一，接口只能通过资源本身来释放资源，不能通过资源 UUID、资源 url 等属性进行释放。
 
 2. 在释放资源时，开发者只需要关注资源本身，引擎会 **自动释放** 其依赖资源，不再需要通过 `getDependsRecursively` 手动获取依赖。
 
@@ -78,7 +78,7 @@ assetManager.releaseAsset(texture);
 
 ### 资源的静态引用
 
-当开发者在编辑器中编辑资源时（例如场景、预制体、材质等），需要在这些资源的属性中配置一些其他的资源，例如在材质中设置贴图，在场景的 Sprite 组件上设置 SpriteFrame。那么这些引用关系会被记录在资源的序列化数据中，引擎可以通过这些数据分析出依赖资源列表，像这样的引用关系就是静态引用。
+当开发者在编辑器中编辑资源时（例如场景、预制件、材质等），需要在这些资源的属性中配置一些其他的资源，例如在材质中设置贴图，在场景的 Sprite 组件上设置 SpriteFrame。那么这些引用关系会被记录在资源的序列化数据中，引擎可以通过这些数据分析出依赖资源列表，像这样的引用关系就是静态引用。
 
 引擎对资源的静态引用的统计方式为：
 
@@ -88,18 +88,18 @@ assetManager.releaseAsset(texture);
 
 因为在释放检查时，如果资源的引用计数为 0，才可以被自动释放。所以上述步骤可以保证资源的依赖资源无法先于资源本身被释放，因为依赖资源的引用计数肯定不为 0。也就是说，只要一个资源本身不被释放，其依赖资源就不会被释放，从而保证在复用资源时不会错误地进行释放。下面我们来看一个例子：
 
-1. 假设现在有一个 A 预制体，其依赖的资源包括 a 材质和 b 材质。a 材质引用了 α 贴图，b 材质引用了 β 贴图。那么在加载 A 预制体之后，a、b 材质的引用计数都为 1，α、β 贴图的引用计数也都为 1。
+1. 假设现在有一个 A 预制件，其依赖的资源包括 a 材质和 b 材质。a 材质引用了 α 贴图，b 材质引用了 β 贴图。那么在加载 A 预制件之后，a、b 材质的引用计数都为 1，α、β 贴图的引用计数也都为 1。
 
     ![](release-manager/pica.png)
 
-2. 假设现在又有一个 B 预制体，其依赖的资源包括 b 材质和 c 材质。则在加载 B 预制体之后，b 材质的引用计数为 2，因为它同时被 A 和 B 预制体所引用。而 c 材质的引用计数为 1，α、β 贴图的引用计数也仍为 1。
+2. 假设现在又有一个 B 预制件，其依赖的资源包括 b 材质和 c 材质。则在加载 B 预制件之后，b 材质的引用计数为 2，因为它同时被 A 和 B 预制件所引用。而 c 材质的引用计数为 1，α、β 贴图的引用计数也仍为 1。
 
     ![](release-manager/picb.png)
 
-3. 此时释放 A 预制体，则 a，b 材质的引用计数会各减 1
+3. 此时释放 A 预制件，则 a，b 材质的引用计数会各减 1
     - a 材质的引用计数变为 0，被释放，所以贴图 α 的引用计数减 1 变为了 0，也被释放。
     - b 材质的引用计数变为 1，被保留，所以贴图 β 的引用计数仍为 1，也被保留。
-    - 因为 B 预制体没有被释放，所以 c 材质的引用计数仍为 1，被保留。
+    - 因为 B 预制件没有被释放，所以 c 材质的引用计数仍为 1，被保留。
 
     ![](release-manager/picc.png)
 
@@ -110,7 +110,7 @@ assetManager.releaseAsset(texture);
 如果开发者在项目中使用动态加载资源来进行动态引用，例如：
 
 ```typescript
-resources.load('images/background', SpriteFrame, function (err, spriteFrame) {
+resources.load('images/background/spriteFrame', SpriteFrame, function (err, spriteFrame) {
     self.getComponent(Sprite).spriteFrame = spriteFrame;
 });
 ```
@@ -118,7 +118,7 @@ resources.load('images/background', SpriteFrame, function (err, spriteFrame) {
 此时会将 SpriteFrame 资源设置到 Sprite 组件上，引擎不会做特殊处理，SpriteFrame 的引用计数仍保持 0。如果动态加载出来的资源需要长期引用、持有，或者复用时，建议使用 `addRef` 接口手动增加引用计数。例如：
 
 ```typescript
-resources.load('images/background', SpriteFrame, function (err, spriteFrame) {
+resources.load('images/background/spriteFrame', SpriteFrame, function (err, spriteFrame) {
     self.getComponent(Sprite).spriteFrame = spriteFrame;
     spriteFrame.addRef();
 });

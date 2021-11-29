@@ -14,7 +14,7 @@ The abstraction layer is bound to take more CPU execution time than using the JS
 
 Most of work in JS binding is actually setting JS related operations with CPP callbacks and associating CPP object within the callback function. In fact, it mainly contains the following two situation:
 
-- Register JS functions (including global functions, class constructors, class destructors, class member functions, and class static member functions), binding revevant CPP callbacks
+- Register JS functions (including global functions, class constructors, class destructors, class member functions, and class static member functions), binding revenant CPP callbacks
 
 - Register accessors for JS properties, bind CPP callbacks for reading and writing properties respectively
 
@@ -408,11 +408,11 @@ SE_BIND_FUNC(Foo_balabala)
 ### Set A Property Value for JS object
 
 ```c++
-se::Object* globalObj = se::ScriptEngine::getInstance()->getGlobalObject(); // We get the global object just for easiler demenstration.
+se::Object* globalObj = se::ScriptEngine::getInstance()->getGlobalObject(); // We get the global object just for easier demonstration.
 globalObj->setProperty("foo", se::Value(100)); // Set a property called `foo` with a value of 100 to the global object.
 ```
 
-Then, you can use the `foo` global variable in JS directly.
+Next, use the `foo` global variable in JS directly.
 
 ```js
 cc.log("foo value: " + foo); // Print `foo value: 100`.
@@ -452,7 +452,7 @@ SE_BIND_PROP_SET(Global_set_foo)
 
 void some_func()
 {
-    se::Object* globalObj = se::ScriptEngine::getInstance()->getGlobalObject(); // We get the global object just for easiler demenstration.
+    se::Object* globalObj = se::ScriptEngine::getInstance()->getGlobalObject(); // We get the global object just for easier demonstration.
     globalObj->defineProperty("foo", _SE(Global_get_foo), _SE(Global_set_foo)); // Use _SE macro to package specific function name.
 }
 ```
@@ -469,7 +469,7 @@ SE_BIND_FUNC(Foo_function)
 
 void some_func()
 {
-    se::Object* globalObj = se::ScriptEngine::getInstance()->getGlobalObject(); // We get the global object just for easiler demenstration.
+    se::Object* globalObj = se::ScriptEngine::getInstance()->getGlobalObject(); // We get the global object just for easier demonstration.
     globalObj->defineFunction("foo", _SE(Foo_function)); // Use _SE macro to package specific function name.
 }
 ```
@@ -582,7 +582,7 @@ bool js_register_ns_SomeClass(se::Object* global)
     se::Value nsVal;
     if (!global->getProperty("ns", &nsVal))
     {
-        // If it doesn't exist, create one. Similar as `var ns = {};` in JS.
+        // If it doesn't exist, create one. Similar as "var ns = {};" in JS.
         se::HandleObject jsobj(se::Object::createPlainObject());
         nsVal.setObject(jsobj);
 
@@ -592,7 +592,7 @@ bool js_register_ns_SomeClass(se::Object* global)
     se::Object* ns = nsVal.toObject();
 
     // Create a se::Class object, developers do not need to consider the release of the se::Class object, which is automatically handled by the ScriptEngine.
-    auto cls = se::Class::create("SomeClass", ns, nullptr, _SE(js_SomeClass_constructor)); // If the registered class doesn't need a  constructor, the last argument can be passed in with nullptr, it will make  `new SomeClass();` illegal.
+    auto cls = se::Class::create("SomeClass", ns, nullptr, _SE(js_SomeClass_constructor)); // If the registered class doesn't need a  constructor, the last argument can be passed in with nullptr, it will make "new SomeClass();" illegal.
 
     // Define member functions, member properties.
     cls->defineFunction("foo", _SE(js_SomeClass_foo));
@@ -607,7 +607,7 @@ bool js_register_ns_SomeClass(se::Object* global)
     // JSBClassType::registerClass is a helper function in the Cocos2D-X native binding code, which is not a part of the ScriptEngine.
     JSBClassType::registerClass<ns::SomeClass>(cls);
 
-    // Save the result to global variable for easily use in other places, for example class inheritence.
+    // Save the result to global variable for easily use in other places, for example class inheritance.
     __jsb_ns_SomeClass_proto = cls->getProto();
     __jsb_ns_SomeClass_class = cls;
 
@@ -657,7 +657,7 @@ static bool js_SomeClass_setCallback(se::State& s)
             // If the current SomeClass class is a singleton, or a class that always has only one instance, we can not associate it with "se::Object::attachObject".
             // Instead, you must use "se::Object::root", developers do not need to unroot since unroot operation will be triggered in the destruction of lambda which makes the "se::Value" jsFunc be destroyed, then "se::Object" destructor will do the unroot operation automatically.
             // The binding function "js_cocos2dx_EventDispatcher_addCustomEventListener" implements it in this way because "EventDispatcher" is always a singleton.
-            // Using "s.thisObject->attachObject(jsFunc.toObject);" for binding addCustomEventListener will cause jsFunc and jsTarget varibales can't be released, which will result in memory leak.
+            // Using "s.thisObject->attachObject(jsFunc.toObject);" for binding addCustomEventListener will cause jsFunc and jsTarget variables can't be released, which will result in memory leak.
 
             // jsFunc.toObject()->root();
             // jsTarget.toObject()->root();
@@ -686,7 +686,7 @@ static bool js_SomeClass_setCallback(se::State& s)
 SE_BIND_FUNC(js_SomeClass_setCallback)
 ```
 
-After SomeClass is registered, you can use it in JS like the following:
+After SomeClass is registered, use it in JS like the following:
 
 ```js
  var myObj = new ns.SomeClass();
@@ -718,7 +718,7 @@ After SomeClass is registered, you can use it in JS like the following:
  }, 6000); // Clear callback after 6 seconds.
 ```
 
-There will be some logs outputed in console:
+There will be some logs outputted in console:
 
 ```
 SomeClass::foo
@@ -737,7 +737,7 @@ Delegate obj, onCallback: 6, this.myVar: 105
 setCallback(nullptr)
 ```
 
-### How to Use The Helper Functions in Cocos2D-X Binding for Easiler Native<->JS Type Conversions
+### How to Use The Helper Functions in Cocos2D-X Binding for Easier Native<->JS Type Conversions
 
 The helper functions for native<->JS type conversions are located in `cocos/scripting/js-bindings/manual/jsb_conversions.hpp/.cpp`, it includes:
 
@@ -896,7 +896,7 @@ bool b2AABB_to_seval(const b2AABB& v, se::Value* ret);
 Auxiliary conversion functions are not part of the abstraction layer (`Script Engine Wrapper`), they belong to the Cocos2D-X binding layer and are encapsulated to facilitate more convenient conversion in the binding code.
 Each conversion function returns the type `bool` indicating whether the conversion was successful or not. Developers need to check the return value after calling these interfaces.
 
-You can know the specific usage directly according to interface names. The first parameter in the interface is input, and the second parameter is the output parameter. The usage is as follows:
+The specific usage is directly known according to interface names. The first parameter in the interface is input, and the second parameter is the output parameter. The usage is as follows:
 
 ```c++
 se::Value v;
@@ -936,7 +936,7 @@ For more specific, please refer to the engine directory `tools/tojs/cocos2dx.ini
 # The prefix for callback functions and the binding file name.
 prefix = cocos2dx
 
-# The namspace of the binding class attaches to.
+# The namespace of the binding class attaches to.
 target_namespace = cc
 
 # Automatic binding tools is based on the Android NDK. The android_headers field configures the search path of Android header file.
@@ -1133,7 +1133,7 @@ SE_BIND_FINALIZE_FUNC(js_cocos2d_Sprite_finalize)
 
 Subclasses of `cocos2d::Ref` must be allocated on the heap, via `new`, and then released by `release`. In JS object's finalize callback function, we should use `autorelease` or `release` to release. If it is allocated on the stack, the reference count is likely to be 0, and then calling `release` in finalize callback will result `delete` is invoked, which causing the program to crash. So in order to prevent this behavior from happening, developers can identify destructors as `protected` or `private` in the binding classes that inherit from `cocos2d::Ref`, ensuring that this problem can be found during compilation.
 
-E.g:
+Example:
 
 ```c++
 class CC_EX_DLL EventAssetsManagerEx : public cocos2d::EventCustom

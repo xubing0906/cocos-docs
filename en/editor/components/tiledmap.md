@@ -4,7 +4,7 @@ TiledMap is used to display a map in TMX format in the game.
 
 ![tiledmap-component](tiledmap/tiledmap-component.png)
 
-Click the **Add Component -> Components -> TileMap** button under the **Inspector** panel to add the TiledMap component to the node.
+Click the **Add Component -> Components -> TiledMap** button under the **Inspector** panel to add the TiledMap component to the node.
 
 ![](./tiledmap/add_tiledmap.png)
 
@@ -14,7 +14,7 @@ For the script interface of TiledMap, please refer to the [TiledMap API](__APIDO
 
 | Property | Description
 | :---------------- | :----------------- |
-| **Tmx Asset** | Specifies a map asset in `.tmx` format |
+| **Tmx Asset** | Specifies a map asset in `.tmx` format (Ensure the `.tmx` and `.tsx` are in the same folder)|
 | **EnableCulling** | Enables culling, which needs to be turned off if the map needs to be rotated or placed in the 3D camera. If the map is not very large, e.g., less than 5000 blocks, then turning off culling reduces the CPU computational load and the GPU renders directly using the cache.
 
 ## Detailed Description
